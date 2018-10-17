@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: datamon-daemon
+  namespace: kube-system
+  labels:
+    k8s-app: datamon-daemon
+spec:
+  selector:
+    matchLabels:
+      name: datamon-daemon
+  template:
+    metadata:
+      labels:
+        name: datamon-daemon
+    spec:
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
+      containers:
+      - name: ubuntu
+        image: ubuntu:latest
+        command:
+          - /data/daemon-script.sh
+        volumeMounts:
+        - name: data
+          mountPath: /data
+      volumes:
+      - name: data
+        hostPath:
+          path: /data

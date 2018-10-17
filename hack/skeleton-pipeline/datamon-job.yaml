@@ -1,0 +1,50 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: datamon-pod
+  labels:
+    app: myapp
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: datamon-container
+          image: ubuntu
+          command: 
+            - /data/scripts/pod-script.sh
+          volumeMounts:
+          - name: scripts
+            mountPath: /data/scripts/
+            readOnly: true
+          - name: datain
+            mountPath: /data/input/repo
+            readOnly: true
+          - name: dataout
+            mountPath: /data/output/repo
+          lifecycle:
+            preStop:
+              exec:
+                command: ["touch", "/data/output/repo/done"]
+      initContainers:
+        - name: datamon-init
+          image: ubuntu
+          command: 
+            - /data/scripts/init-script.sh
+          volumeMounts:
+          - name: scripts
+            mountPath: /data/scripts/
+            readOnly: true
+          - name: datain
+            mountPath: /data/input/repo
+      volumes:
+        - name: scripts
+          hostPath:
+            path: /data/scripts
+        - name: datain
+          hostPath:
+            path: /data/input/repo
+        - name: dataout
+          hostPath:
+            path: /data/output/repo
+
