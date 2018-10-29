@@ -17,6 +17,21 @@ Every bundle is an entry in the history of a repository.
 `,
 }
 
+var bundleOptions struct {
+	Id string
+	CachePath string
+	DownloadPath string
+}
+
 func init() {
 	rootCmd.AddCommand(bundleCmd)
+}
+
+func addBundleFlag(cmd *cobra.Command) error {
+	cmd.Flags().StringVarP(&bundleOptions.Id, "id", "i","", "The id for the bundle")
+	return cmd.MarkFlagRequired("id")
+}
+
+func addCachePathFlag(cmd *cobra.Command) error {
+	cmd.Flags().StringVarP(&bundleOptions.CachePath, "cache", "c", "", "The path to the cache folder")
 }

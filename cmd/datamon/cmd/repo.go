@@ -105,3 +105,4 @@ func addPersistentRepoFlag(cmd *cobra.Command) error {
 	cmd.PersistentFlags().StringVar(&repoOptions.Name, "repo", "", "The name of the repository this command applies to")
 	return cmd.MarkPersistentFlagRequired("repo")
 }
+

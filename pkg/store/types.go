@@ -27,6 +27,22 @@ type Bundle struct {
 	Timestamp  time.Time     `json:"timestamp,omitempty" yaml:"timestamp,omitempty"`
 	IsSnapshot bool          `json:"is_snapshot,omitempty" yaml:"is_snapshot,omitempty"`
 	Committers []Contributor `json:"committers" yaml:"committers"`
+	EntryFilesCount int64 	 `json:"entryfilescount", yaml:"entryfilescount"`
+	_          struct{}      `json:"-" yaml:"-"`
+}
+
+// List of all files part of a bundle.
+type BundleEntries struct {
+	BundleEntries []BundleEntry `json:"BundleEntries" yaml:"BundleEntries"`
+	_          struct{}      `json:"-" yaml:"-"`
+}
+
+// List of files, directories (empty) skipped
+type BundleEntry struct {
+	Hash string `json:"hash" yaml:"hash"`
+	NameWithPath string		`json:"name" yaml:"name"`
+	FileMode	os.FileMode	`json:"mode" yaml:"mode"`
+	Size 			int64 			`json:"size" yaml:"size"`
 	_          struct{}      `json:"-" yaml:"-"`
 }
 

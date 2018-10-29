@@ -1,6 +1,7 @@
 module github.com/oneconcern/datamon
 
 require (
+	cloud.google.com/go v0.31.0
 	github.com/AndreasBriese/bbloom v0.0.0-20180913140656-343706a395b7
 	github.com/aws/aws-sdk-go v1.15.35
 	github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973
@@ -19,6 +20,7 @@ require (
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
 	github.com/golang/protobuf v1.2.0
 	github.com/google/gofuzz v0.0.0-20170612174753-24818f796faf
+	github.com/googleapis/gax-go v2.0.0+incompatible // indirect
 	github.com/googleapis/gnostic v0.2.0
 	github.com/gorilla/websocket v1.4.0
 	github.com/gosuri/uitable v0.0.0-20160404203958-36ee7e946282
@@ -62,6 +64,7 @@ require (
 	github.com/uber/jaeger-client-go v2.14.0+incompatible
 	github.com/uber/jaeger-lib v1.5.0
 	github.com/vektah/gqlgen v0.0.0-20180714070128-381b34691fd9
+	go.opencensus.io v0.18.0 // indirect
 	go.uber.org/atomic v1.3.2
 	go.uber.org/multierr v1.1.0
 	go.uber.org/zap v1.9.1
@@ -70,6 +73,9 @@ require (
 	golang.org/x/sys v0.0.0-20180909124046-d0be0721c37e
 	golang.org/x/text v0.3.0
 	golang.org/x/time v0.0.0-20180412165947-fbb02b2291d2
+	google.golang.org/api v0.0.0-20181025000501-39567f0042a0 // indirect
+	google.golang.org/genproto v0.0.0-20181016170114-94acd270e44e // indirect
+	google.golang.org/grpc v1.16.0 // indirect
 	gopkg.in/inf.v0 v0.9.1
 	gopkg.in/yaml.v2 v2.2.1
 	k8s.io/api v0.0.0-20180913155108-f456898a08e4
