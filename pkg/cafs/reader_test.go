@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/oneconcern/datamon/pkg/storage"
-	"github.com/oneconcern/datamon/pkg/storage/localfs"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/require"
 )
@@ -27,7 +26,7 @@ func readTextFile(t testing.TB, pth string) string {
 }
 
 func TestChunkReader_SmallOnly(t *testing.T) {
-	blobs := localfs.New(afero.NewBasePathFs(afero.NewOsFs(), filepath.Join(destDir, "cafs")))
+	blobs := storage.NewLocalFS(afero.NewBasePathFs(afero.NewOsFs(), filepath.Join(destDir, "cafs")))
 	for _, tf := range testFiles(destDir) {
 		if tf.Parts > 1 {
 			continue
@@ -53,7 +52,7 @@ func verifyChunkReader(t testing.TB, blobs storage.Store, tf testFile) {
 }
 
 func TestChunkReader_All(t *testing.T) {
-	blobs := localfs.New(afero.NewBasePathFs(afero.NewOsFs(), filepath.Join(destDir, "cafs")))
+	blobs := storage.NewLocalFS(afero.NewBasePathFs(afero.NewOsFs(), filepath.Join(destDir, "cafs")))
 	for _, tf := range testFiles(destDir) {
 		verifyChunkReader(t, blobs, tf)
 	}

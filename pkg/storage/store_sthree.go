@@ -1,4 +1,4 @@
-package sthree
+package storage
 
 import (
 	"context"
@@ -10,24 +10,26 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
-	"github.com/oneconcern/datamon/pkg/storage"
 )
 
 type Option func(*s3FS)
 
+// Bucket sets the bucket for S#
 func Bucket(bucket string) Option {
 	return func(fs *s3FS) {
 		fs.bucket = bucket
 	}
 }
 
+// AWSConfig func option
 func AWSConfig(cfg *aws.Config) Option {
 	return func(fs *s3FS) {
 		fs.awsConfig = cfg
 	}
 }
 
-func New(option Option, options ...Option) storage.Store {
+// NewSThree creates a new instance of a AWS S3 backed store
+func NewSThree(option Option, options ...Option) Store {
 	fs := new(s3FS)
 	option(fs)
 	for _, apply := range options {

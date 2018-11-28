@@ -1,6 +1,6 @@
 // Copyright © 2018 One Concern
 
-package localfs
+package storage
 
 import (
 	"context"
@@ -10,12 +10,11 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/oneconcern/datamon/pkg/storage"
 	"github.com/spf13/afero"
 )
 
-// New creates a new local file system backed storage model
-func New(fs afero.Fs) storage.Store {
+// NewLocalFS creates a new creates a new local file system backed storage model
+func NewLocalFS(fs afero.Fs) Store {
 	if fs == nil {
 		fs = afero.NewBasePathFs(afero.NewOsFs(), filepath.Join(".datamon", "objects"))
 	}

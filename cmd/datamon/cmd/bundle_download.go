@@ -6,9 +6,9 @@ import (
 	"context"
 	"log"
 
+	"github.com/oneconcern/datamon/pkg/storage"
+
 	"github.com/oneconcern/datamon/pkg/core"
-	"github.com/oneconcern/datamon/pkg/storage/gcs"
-	"github.com/oneconcern/datamon/pkg/storage/localfs"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )
@@ -23,8 +23,8 @@ var downloadBundleCmd = &cobra.Command{
 
 		DieIfNotAccessible(bundleOptions.DataPath)
 
-		sourceStore := gcs.New(repoParams.Bucket)
-		destinationSource := localfs.New(afero.NewBasePathFs(afero.NewOsFs(), bundleOptions.DataPath))
+		sourceStore := storage.NewGCS(repoParams.Bucket)
+		destinationSource := storage.NewLocalFS(afero.NewBasePathFs(afero.NewOsFs(), bundleOptions.DataPath))
 		archiveBundle, err := core.NewArchiveBundle(repoParams.RepoName, bundleOptions.ID, sourceStore)
 		if err != nil {
 			log.Fatalln(err)

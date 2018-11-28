@@ -4,10 +4,11 @@ import (
 	"bytes"
 	"context"
 
+	"github.com/oneconcern/datamon/pkg/storage"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/oneconcern/datamon/pkg/config"
 	"github.com/oneconcern/datamon/pkg/kubeless"
-	"github.com/oneconcern/datamon/pkg/storage/sthree"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
@@ -63,8 +64,8 @@ var deployCmd = &cobra.Command{
 			log.Fatalf("error in opening zip file %s. error %v ", zipfile, err)
 		}
 
-		bs := sthree.New(sthree.Bucket(*aws.String("oneconcern-datamon-dev")),
-			sthree.AWSConfig(aws.NewConfig().WithRegion("us-west-2").WithCredentialsChainVerboseErrors(true)))
+		bs := storage.NewSThree(storage.Bucket(*aws.String("oneconcern-datamon-dev")),
+			storage.AWSConfig(aws.NewConfig().WithRegion("us-west-2").WithCredentialsChainVerboseErrors(true)))
 
 		s3FileName := zipfile[strings.LastIndex(zipfile, "/")+1:]
 

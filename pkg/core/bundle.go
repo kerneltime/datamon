@@ -21,6 +21,7 @@ type ConsumableBundle struct {
 	Store storage.Store
 }
 
+// Publish an archived bundle to a consumable bundle.
 func Publish(ctx context.Context, archiveBundle *ArchiveBundle, consumableBundle ConsumableBundle) error {
 	err := unpackBundleDescriptor(ctx, archiveBundle, consumableBundle)
 	if err != nil {
@@ -39,6 +40,7 @@ func Publish(ctx context.Context, archiveBundle *ArchiveBundle, consumableBundle
 	return nil
 }
 
+// NewArchiveBundle returns a new archive bundle
 func NewArchiveBundle(repo string, bundle string, store storage.Store) (*ArchiveBundle, error) {
 	return &ArchiveBundle{
 		repoID:   repo,

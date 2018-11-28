@@ -8,7 +8,6 @@ import (
 	"github.com/oneconcern/datamon/pkg/core"
 	"github.com/oneconcern/datamon/pkg/model"
 	"github.com/oneconcern/datamon/pkg/storage"
-	"github.com/oneconcern/datamon/pkg/storage/localfs"
 	"github.com/segmentio/ksuid"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/require"
@@ -41,8 +40,8 @@ var (
 
 func TestDownloadBundle(t *testing.T) {
 	require.NoError(t, setup(t))
-	destinationStore := localfs.New(afero.NewBasePathFs(afero.NewOsFs(), destinationDir))
-	sourceStore := localfs.New(afero.NewBasePathFs(afero.NewOsFs(), sourceDir))
+	destinationStore := storage.NewLocalFS(afero.NewBasePathFs(afero.NewOsFs(), destinationDir))
+	sourceStore := storage.NewLocalFS(afero.NewBasePathFs(afero.NewOsFs(), sourceDir))
 	archiveBundle, err := core.NewArchiveBundle(repo, bundleID, sourceStore)
 	require.NoError(t, err)
 	require.NoError(t,
@@ -105,8 +104,8 @@ func generateDataFile(test *testing.T, store storage.Store) model.BundleEntry {
 func setup(t *testing.T) error {
 	cleanup()
 
-	sourceStore := localfs.New(afero.NewBasePathFs(afero.NewOsFs(), sourceDir))
-	blobStore := localfs.New(afero.NewBasePathFs(afero.NewOsFs(), sourceDir+"blobs"))
+	sourceStore := storage.NewLocalFS(afero.NewBasePathFs(afero.NewOsFs(), sourceDir))
+	blobStore := storage.NewLocalFS(afero.NewBasePathFs(afero.NewOsFs(), sourceDir+"blobs"))
 	require.NoError(t, os.MkdirAll(internalDir, 0700))
 	var i, j int64
 

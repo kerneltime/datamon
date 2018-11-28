@@ -8,7 +8,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/oneconcern/datamon/pkg/storage/localfs"
+	"github.com/oneconcern/datamon/pkg/storage"
+
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/require"
 )
@@ -27,7 +28,7 @@ func assertReaderOriginal(t testing.TB, original string, rdr io.ReadCloser) {
 }
 
 func TestCAFS_Get(t *testing.T) {
-	blobs := localfs.New(afero.NewBasePathFs(afero.NewOsFs(), filepath.Join(destDir, "cafs")))
+	blobs := storage.NewLocalFS(afero.NewBasePathFs(afero.NewOsFs(), filepath.Join(destDir, "cafs")))
 	fs, err := New(
 		LeafSize(leafSize),
 		Backend(blobs),
@@ -103,7 +104,7 @@ func TestCAFS_Delete(t *testing.T) {
 }
 
 func TestCAFS_Has_AllPresent(t *testing.T) {
-	blobs := localfs.New(afero.NewBasePathFs(afero.NewOsFs(), filepath.Join(destDir, "cafs")))
+	blobs := storage.NewLocalFS(afero.NewBasePathFs(afero.NewOsFs(), filepath.Join(destDir, "cafs")))
 	fs, err := New(
 		LeafSize(leafSize),
 		Backend(blobs),
@@ -252,7 +253,7 @@ func TestCAFS_Has_SomeMissing(t *testing.T) {
 }
 
 func TestCAFS_Keys(t *testing.T) {
-	blobs := localfs.New(afero.NewBasePathFs(afero.NewOsFs(), filepath.Join(destDir, "cafs")))
+	blobs := storage.NewLocalFS(afero.NewBasePathFs(afero.NewOsFs(), filepath.Join(destDir, "cafs")))
 	fs, err := New(
 		LeafSize(leafSize),
 		Backend(blobs),
@@ -283,7 +284,7 @@ func TestCAFS_Keys(t *testing.T) {
 }
 
 func TestCAFS_RootKeys(t *testing.T) {
-	blobs := localfs.New(afero.NewBasePathFs(afero.NewOsFs(), filepath.Join(destDir, "cafs")))
+	blobs := storage.NewLocalFS(afero.NewBasePathFs(afero.NewOsFs(), filepath.Join(destDir, "cafs")))
 	fs, err := New(
 		LeafSize(leafSize),
 		Backend(blobs),

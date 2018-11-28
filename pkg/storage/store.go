@@ -11,9 +11,11 @@ import (
 
 type errString string
 
+// MaxObjectSizeInMemory is the max object that should be read into memory
 const MaxObjectSizeInMemory = 2 * 1024 * 1024 * 1024 // 2 gigs
 func (e errString) Error() string                    { return string(e) }
 
+// Errors
 const (
 	ErrNotFound     errString = "not found"
 	ErrForbidden    errString = "forbidden"
@@ -36,6 +38,7 @@ type Store interface {
 	Clear(context.Context) error
 }
 
+// ReadTee reads into buffer and write to destination
 func ReadTee(ctx context.Context, sStore Store, source string, dStore Store, destination string) ([]byte, error) {
 	reader, err := sStore.Get(ctx, source)
 	if err != nil {

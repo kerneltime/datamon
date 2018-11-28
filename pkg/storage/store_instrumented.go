@@ -8,11 +8,12 @@ import (
 	"strings"
 
 	"github.com/oneconcern/pipelines/pkg/log"
-	opentracing "github.com/opentracing/opentracing-go"
+	"github.com/opentracing/opentracing-go"
 	"go.uber.org/zap"
 )
 
-func Instrument(tr opentracing.Tracer, logs log.Factory, store Store) Store {
+// NewInstrumented adds instrumentation to Store interface
+func NewInstrumented(tr opentracing.Tracer, logs log.Factory, store Store) Store {
 	return &instrumentedStore{
 		tr:    tr,
 		store: store,

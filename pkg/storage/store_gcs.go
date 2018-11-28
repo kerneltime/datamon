@@ -1,6 +1,6 @@
 // Copyright © 2018 One Concern
 
-package gcs
+package storage
 
 import (
 	gcsStorage "cloud.google.com/go/storage"
@@ -8,7 +8,6 @@ import (
 	"context"
 	"errors"
 
-	"github.com/oneconcern/datamon/pkg/storage"
 	"google.golang.org/api/option"
 
 	"io"
@@ -18,7 +17,8 @@ type gcs struct {
 	bucket string
 }
 
-func New(bucket string) storage.Store {
+// NewGCS creates a new instance of GCS backed store
+func NewGCS(bucket string) Store {
 	googleStore := new(gcs)
 	googleStore.bucket = bucket
 	return googleStore

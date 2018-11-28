@@ -6,7 +6,6 @@ import (
 	"io"
 
 	"github.com/oneconcern/datamon/pkg/storage"
-	"github.com/oneconcern/datamon/pkg/storage/localfs"
 
 	"github.com/docker/go-units"
 )
@@ -15,6 +14,7 @@ const (
 	DefaultLeafSize = 2 * 1024 * 1024
 )
 
+// Backend sets the storage to use
 func Backend(store storage.Store) Option {
 	return func(w *defaultFs) {
 		w.fs = store
@@ -30,12 +30,14 @@ func LeafSize(sz uint32) Option {
 
 type HasOption func(*hasOpts)
 
+// HasOnlyRoots set to true if only roots are present
 func HasOnlyRoots() HasOption {
 	return func(opts *hasOpts) {
 		opts.OnlyRoots = true
 	}
 }
 
+// HasGatherIncomplete sets OnlyRoots and GatherIncomplete to true
 func HasGatherIncomplete() HasOption {
 	return func(opts *hasOpts) {
 		opts.OnlyRoots = true
@@ -43,6 +45,7 @@ func HasGatherIncomplete() HasOption {
 	}
 }
 
+// Prefix sets the prefix to use when talking to the backend for the keys.
 func Prefix(prefix string) Option {
 	return func(w *defaultFs) {
 		w.prefix = prefix
@@ -71,7 +74,7 @@ type Fs interface {
 // New creates a new file system operations instance for a repository
 func New(opts ...Option) (Fs, error) {
 	f := &defaultFs{
-		fs:       localfs.New(nil),
+		fs:       storage.NewLocalFS(nil),
 		leafSize: uint32(5 * units.MiB),
 	}
 

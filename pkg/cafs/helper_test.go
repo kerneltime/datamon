@@ -11,7 +11,6 @@ import (
 
 	"github.com/oneconcern/datamon/pkg/storage"
 
-	"github.com/oneconcern/datamon/pkg/storage/localfs"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/require"
 )
@@ -86,7 +85,7 @@ func TestMain(m *testing.M) {
 
 func setupTestData(dir string, files []testFile) (*testDataGenerator, storage.Store, Fs, error) {
 	os.RemoveAll(dir)
-	blobs := localfs.New(afero.NewBasePathFs(afero.NewOsFs(), filepath.Join(dir, "cafs")))
+	blobs := storage.NewLocalFS(afero.NewBasePathFs(afero.NewOsFs(), filepath.Join(dir, "cafs")))
 	fs, err := New(
 		LeafSize(leafSize),
 		Backend(blobs),
@@ -137,7 +136,7 @@ func (t *testDataGenerator) Generate(files []testFile) error {
 }
 
 func TestLeafHashes_Single(t *testing.T) {
-	blobs := localfs.New(afero.NewBasePathFs(afero.NewOsFs(), filepath.Join(destDir, "cafs")))
+	blobs := storage.NewLocalFS(afero.NewBasePathFs(afero.NewOsFs(), filepath.Join(destDir, "cafs")))
 	for _, tf := range testFiles(destDir) {
 		if tf.Parts > 1 {
 			continue
@@ -181,7 +180,7 @@ func TestLeafHashes_Single(t *testing.T) {
 }
 
 func TestLeafHashes_Multi(t *testing.T) {
-	blobs := localfs.New(afero.NewBasePathFs(afero.NewOsFs(), filepath.Join(destDir, "cafs")))
+	blobs := storage.NewLocalFS(afero.NewBasePathFs(afero.NewOsFs(), filepath.Join(destDir, "cafs")))
 	for _, tf := range testFiles(destDir) {
 
 		rhash := readTextFile(t, tf.RootHash)
