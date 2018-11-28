@@ -9,6 +9,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const bash = "bash"
+const zsh = "zsh"
+
 // completionCmd represents the completion command
 var completionCmd = &cobra.Command{
 	Use:   "completion SHELL",
@@ -24,7 +27,7 @@ var completionCmd = &cobra.Command{
 		tpt completion zsh > /usr/local/share/zsh/site-functions/_tpt
 
 	`,
-	ValidArgs: []string{"bash", "zsh"},
+	ValidArgs: []string{bash, zsh},
 	Args:      cobra.OnlyValidArgs,
 
 	Run: func(cmd *cobra.Command, args []string) {
@@ -34,16 +37,18 @@ var completionCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		shell := args[0]
-		if shell != "bash" && shell != "zsh" {
+		if shell != bash && shell != zsh {
 			// #nosec
 			fmt.Fprintln(os.Stderr, "the only supported shells are bash and zsh")
 		}
-		if shell == "bash" {
-			rootCmd.GenBashCompletion(os.Stdout)
+		if shell == bash {
+			err := rootCmd.GenBashCompletion(os.Stdout)
+			fmt.Fprintln(os.Stderr, "failed to generate bash completion:", err)
 		}
 
-		if shell == "zsh" {
-			rootCmd.GenZshCompletion(os.Stdout)
+		if shell == zsh {
+			err := rootCmd.GenZshCompletion(os.Stdout)
+			fmt.Fprintln(os.Stderr, "failed to generate zsh completion:", err)
 		}
 	},
 }

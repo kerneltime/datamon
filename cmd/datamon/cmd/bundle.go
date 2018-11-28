@@ -18,7 +18,7 @@ Every bundle is an entry in the history of a repository at a point in time.
 }
 
 var bundleOptions struct {
-	Id       string
+	ID       string
 	DataPath string
 }
 
@@ -26,12 +26,14 @@ func init() {
 	rootCmd.AddCommand(bundleCmd)
 }
 
-func addBundleFlag(cmd *cobra.Command) error {
-	cmd.Flags().StringVarP(&bundleOptions.Id, "hash", "i", "", "The hash id for the bundle")
-	return cmd.MarkFlagRequired("hash")
+func addBundleFlag(cmd *cobra.Command) string {
+	hash := "hash"
+	cmd.Flags().StringVarP(&bundleOptions.ID, hash, "i", "", "The hash id for the bundle")
+	return hash
 }
 
-func addDataPathFlag(cmd *cobra.Command) error {
-	cmd.Flags().StringVarP(&bundleOptions.DataPath, "destination", "d", "", "The path to the download folder")
-	return cmd.MarkFlagRequired("destination")
+func addDataPathFlag(cmd *cobra.Command) string {
+	destination := "destination"
+	cmd.Flags().StringVarP(&bundleOptions.DataPath, destination, "d", "", "The path to the download folder")
+	return destination
 }
