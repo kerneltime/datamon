@@ -6,6 +6,8 @@ import (
 	"context"
 	"errors"
 
+	"google.golang.org/api/iterator"
+
 	gcsStorage "cloud.google.com/go/storage"
 
 	"github.com/oneconcern/datamon/pkg/storage"
@@ -15,25 +17,33 @@ import (
 )
 
 type gcs struct {
-	bucket string
+	client         *gcsStorage.Client
+	readOnlyClient *gcsStorage.Client
+	bucket         string
 }
 
-func New(bucket string) storage.Store {
+func New(bucket string) (storage.Store, error) {
 	googleStore := new(gcs)
 	googleStore.bucket = bucket
-	return googleStore
+	var err error
+	googleStore.readOnlyClient, err = gcsStorage.NewClient(context.TODO(), option.WithScopes(gcsStorage.ScopeReadOnly))
+	if err != nil {
+		return nil, err
+	}
+	googleStore.client, err = gcsStorage.NewClient(context.TODO(), option.WithScopes(gcsStorage.ScopeFullControl))
+	if err != nil {
+		return nil, err
+	}
+	return googleStore, err
 }
 
 func (g *gcs) String() string {
-	return ""
+	return "gcs://" + g.bucket
 }
 
 func (g *gcs) Has(ctx context.Context, objectName string) (bool, error) {
-	client, err := gcsStorage.NewClient(ctx, option.WithScopes(gcsStorage.ScopeReadOnly))
-	if err != nil {
-		return false, err
-	}
-	_, err = client.Bucket(g.bucket).Object(objectName).Attrs(ctx)
+
+	_, err := g.readOnlyClient.Bucket(g.bucket).Object(objectName).Attrs(ctx)
 	if err != nil {
 		if err != gcsStorage.ErrObjectNotExist {
 			return false, nil
@@ -44,11 +54,7 @@ func (g *gcs) Has(ctx context.Context, objectName string) (bool, error) {
 }
 
 func (g *gcs) Get(ctx context.Context, objectName string) (io.ReadCloser, error) {
-	client, err := gcsStorage.NewClient(ctx, option.WithScopes(gcsStorage.ScopeReadOnly))
-	if err != nil {
-		return nil, err
-	}
-	objectReader, err := client.Bucket(g.bucket).Object(objectName).NewReader(ctx)
+	objectReader, err := g.readOnlyClient.Bucket(g.bucket).Object(objectName).NewReader(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -56,14 +62,9 @@ func (g *gcs) Get(ctx context.Context, objectName string) (io.ReadCloser, error)
 }
 
 func (g *gcs) Put(ctx context.Context, objectName string, reader io.Reader) error {
-	client, err := gcsStorage.NewClient(ctx, option.WithScopes(gcsStorage.ScopeReadWrite))
-	if err != nil {
-		return err
-	}
-
 	// Put if not present
-	writer := client.Bucket(g.bucket).Object(objectName).Generation(0).NewWriter(ctx)
-	_, err = io.Copy(writer, reader)
+	writer := g.client.Bucket(g.bucket).Object(objectName).If(gcsStorage.Conditions{DoesNotExist: true}).NewWriter(ctx)
+	_, err := io.Copy(writer, reader)
 	if err != nil {
 		return err
 	}
@@ -71,20 +72,18 @@ func (g *gcs) Put(ctx context.Context, objectName string, reader io.Reader) erro
 }
 
 func (g *gcs) Delete(ctx context.Context, objectName string) error {
-	client, err := gcsStorage.NewClient(ctx, option.WithScopes(gcsStorage.DeleteAction))
-	if err != nil {
-		return err
-	}
-	return client.Bucket(g.bucket).Object(objectName).Delete(ctx)
+	return g.client.Bucket(g.bucket).Object(objectName).Delete(ctx)
 }
 
 func (g *gcs) Keys(ctx context.Context) ([]string, error) {
-	client, err := gcsStorage.NewClient(ctx, option.WithScopes(gcsStorage.ScopeReadOnly))
-	if err != nil {
-		return nil, err
+	// TODO: Finish listing all keys in one go.
+	objectsIterator := g.readOnlyClient.Bucket(g.bucket).Objects(ctx, nil)
+	for {
+		_, err := objectsIterator.Next()
+		if err == iterator.Done {
+			break
+		}
 	}
-	objectsIterator := client.Bucket(g.bucket).Objects(ctx, nil)
-	objectsIterator.Next()
 	return nil, nil
 }
 
@@ -92,6 +91,6 @@ func (g *gcs) Clear(context.Context) error {
 	return errors.New("unimplemented")
 }
 
-func (g *gcs) GetAt(ctx context.Context, objectName string) (io.ReaderAt, err) {
+func (g *gcs) GetAt(ctx context.Context, objectName string) (io.ReaderAt, error) {
 	return nil, errors.New("unimplemented")
 }
