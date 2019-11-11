@@ -46,3 +46,5 @@ require (
 	k8s.io/kubernetes v1.14.2
 	k8s.io/utils v0.0.0-20190520173318-324c5df7d3f0 // indirect
 )
+
+go 1.13

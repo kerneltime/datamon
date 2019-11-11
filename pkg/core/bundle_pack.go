@@ -5,6 +5,7 @@ package core
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"hash/crc32"
 	"io"
 	"os"
@@ -170,7 +171,7 @@ func uploadBundleFiles(
 				continue
 			}
 			chans.error <- errorHit{
-				error: err,
+				error: fmt.Errorf("received error for :%s , err:%f", file, err),
 				file:  file,
 			}
 			break
